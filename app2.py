@@ -2,6 +2,7 @@ import os
 import time
 import cv2
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -71,7 +72,7 @@ def process_image():
         print(f"[ERROR] File tidak ditemukan: {path}")
         return
 
-    now = datetime.now()
+    now = datetime.now(ZoneInfo("Asia/Jakarta"))
     timestamp_str = now.strftime("%H:%M:%S")
     plate = detect_plate(path)
     state["log"].append(f"[{timestamp_str}] Diproses: {image} ➜ {plate}")
@@ -122,7 +123,7 @@ def serve_frontend():
 @app.get("/state")
 def get_state():
     pit_status = []
-    now = datetime.now()
+    now = datetime.now(ZoneInfo("Asia/Jakarta"))
     for i in range(5):
         if state["pit_log"][i] != "Empty" and state["pit_time"][i]:
             elapsed = (now - state["pit_time"][i]).total_seconds()
@@ -152,7 +153,7 @@ async def upload_files(files: list[UploadFile] = File(...)):
             f.write(await file.read())
         state["image_queue"].append(filename)
         print(f"[UPLOAD] {filename} ditambahkan ke queue")
-        state["log"].append(f"[{datetime.now().strftime('%H:%M:%S')}] Upload: {filename}")
+        state["log"].append(f"[{datetime.now(ZoneInfo('Asia/Jakarta')).strftime('%H:%M:%S')}] Upload: {filename}")
     return {"status": "uploaded"}
 
 @app.post("/start")
@@ -163,14 +164,14 @@ async def start_simulasi():
     state["last_process_time"] = time.time() - 120
     state["image_queue"].sort()
     print(f"[START] Simulasi dimulai. Queue: {state['image_queue']}")
-    state["log"].append(f"[{datetime.now().strftime('%H:%M:%S')}] Simulasi dimulai")
+    state["log"].append(f"[{datetime.now(ZoneInfo('Asia/Jakarta')).strftime('%H:%M:%S')}] Simulasi dimulai")
     return {"status": "started"}
 
 @app.post("/stop")
 async def stop_simulasi():
     state["simulation_running"] = False
     state["force_stop"] = True
-    state["log"].append(f"[{datetime.now().strftime('%H:%M:%S')}] Simulasi dihentikan")
+    state["log"].append(f"[{datetime.now(ZoneInfo('Asia/Jakarta')).strftime('%H:%M:%S')}] Simulasi dihentikan")
     return {"status": "stopped"}
 
 @app.post("/reset")

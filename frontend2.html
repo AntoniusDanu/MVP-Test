@@ -97,6 +97,29 @@
       background: white;
       border-left: 4px solid #3498db;
     }
+
+    /* ✨ Tambahan agar scrollable */
+    #log-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    #summary-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    /* ✨ Styling scrollbar (opsional) */
+    #log-list::-webkit-scrollbar,
+    #summary-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #log-list::-webkit-scrollbar-thumb,
+    #summary-list::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 6px;
+    }
   </style>
 </head>
 
@@ -187,6 +210,7 @@
         summary.appendChild(div);
       });
     }
+
     async function uploadImages() {
       const input = document.getElementById("upload");
       const files = input.files;
@@ -200,15 +224,19 @@
       });
       alert("Upload folder selesai.");
     }
+
     async function startSimulasi() {
       await fetch("/start", { method: "POST" });
     }
+
     async function stopSimulasi() {
       await fetch("/stop", { method: "POST" });
     }
+
     async function resetSimulasi() {
       await fetch("/reset", { method: "POST" });
     }
+
     setInterval(fetchState, 1000);
   </script>
 </body>
